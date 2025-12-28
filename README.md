@@ -1,59 +1,122 @@
-# Enhanced Vite React TypeScript Template
+# 🚗 Tour Route Planner
 
-This template includes built-in detection for missing CSS variables between your Tailwind config and CSS files.
+A comprehensive logistics and delivery route optimization platform with advanced fuel management, safety features, and voice control.
 
-## Features
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![Firebase](https://img.shields.io/badge/Firebase-039BE5?style=for-the-badge&logo=Firebase&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 
-- **CSS Variable Detection**: Automatically detects if CSS variables referenced in `tailwind.config.cjs` are defined in `src/index.css`
-- **Enhanced Linting**: Includes ESLint, Stylelint, and custom CSS variable validation
-- **Shadcn/ui**: Pre-configured with all Shadcn components
-- **Modern Stack**: Vite + React + TypeScript + Tailwind CSS
+## ✨ Features
 
-## Available Scripts
+- 🗺️ **Smart Route Optimization** - AI-powered route planning for multiple stops
+- ⛽ **Fuel Management System** - Track, optimize, and manage fuel consumption
+- 🛡️ **Safety & Compliance** - Built-in safety protocols and delivery logging
+- 🎤 **Voice Assistant** - Hands-free navigation and control
+- 📊 **Real-time Analytics** - Monitor performance and efficiency
+- 👥 **Influencer Integration** - Marketing and social media features
+- 🔥 **Firebase Backend** - Secure, scalable cloud infrastructure
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Node.js 18+ 
+- npm or yarn
+- Firebase account (for backend features)
+
+### Installation
 
 ```bash
-# Run all linting (includes CSS variable check)
-npm run lint
+# Clone the repository
+git clone https://github.com/engel687-ui/App-V.01.git
+cd "App V.01"
 
-# Check only CSS variables
-npm run check:css-vars
+# Install dependencies
+npm install
 
-# Individual linting
-npm run lint:js    # ESLint
-npm run lint:css   # Stylelint
+# Start development server
+npm run dev
 ```
 
-## CSS Variable Detection
+Visit `http://localhost:3000` to see your app.
 
-The template includes a custom script that:
+### Firebase Setup
 
-1. **Parses `tailwind.config.cjs`** to find all `var(--variable)` references
-2. **Parses `src/index.css`** to find all defined CSS variables (`--variable:`)
-3. **Cross-references** them to find missing definitions
-4. **Reports undefined variables** with clear error messages
+See [Firebase Setup Guide](docs/deployment/FIREBASE_SETUP.md) for detailed instructions.
 
-### Example Output
+## 📁 Project Structure
 
-When CSS variables are missing:
 ```
-❌ Undefined CSS variables found in tailwind.config.cjs:
-   --sidebar-background
-   --sidebar-foreground
-   --sidebar-primary
-
-Add these variables to src/index.css
-```
-
-When all variables are defined:
-```
-✅ All CSS variables in tailwind.config.cjs are defined
+App V.01/
+├── docs/                    # 📚 Documentation
+│   ├── getting-started/     # Quick start guides
+│   ├── architecture/        # System design docs
+│   ├── features/            # Feature documentation
+│   │   ├── fuel-system/     # Fuel management docs
+│   │   └── safety/          # Safety feature docs
+│   ├── deployment/          # Deployment guides
+│   └── development/         # Development resources
+├── src/                     # 💻 Source code
+├── public/                  # 📂 Static assets
+├── firebase-backend/        # 🔥 Firebase configuration
+└── dist/                    # 📦 Production build
 ```
 
-## How It Works
+## 🛠️ Tech Stack
 
-The detection happens during the `npm run lint` command, which will:
-- Exit with error code 1 if undefined variables are found
-- Show exactly which variables need to be added to your CSS file
-- Integrate seamlessly with your development workflow
+| Category | Technology |
+|----------|------------|
+| **Frontend** | React 18, TypeScript, Vite |
+| **Styling** | Tailwind CSS, Shadcn/ui |
+| **Backend** | Firebase (Auth, Firestore, Functions) |
+| **State** | React Context/Hooks |
+| **Build Tool** | Vite |
+| **Linting** | ESLint, Stylelint |
 
-This prevents runtime CSS issues where Tailwind classes reference undefined CSS variables.
+## 📦 Available Scripts
+
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run preview      # Preview production build
+npm run lint         # Run all linters
+```
+
+## 📚 Documentation
+
+| Guide | Description |
+|-------|-------------|
+| [Quick Start](docs/getting-started/QUICK_START.md) | Get up and running quickly |
+| [Architecture Overview](docs/architecture/ARCHITECTURE_COMPLETE.md) | System design and structure |
+| [Fuel System Guide](docs/features/fuel-system/FUEL_ARCHITECTURE.md) | Fuel management features |
+| [Safety Features](docs/features/safety/SAFETY_IMPLEMENTATION_SUMMARY.md) | Safety and compliance |
+| [Voice Assistant](docs/features/VOICE_ASSISTANT_GUIDE.md) | Voice control setup |
+| [Firebase Setup](docs/deployment/FIREBASE_SETUP.md) | Backend configuration |
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Built with [Vite](https://vitejs.dev/)
+- UI components from [Shadcn/ui](https://ui.shadcn.com/)
+- Icons from [Lucide](https://lucide.dev/)
+
+---
+
+<p align="center">
+  Made with ❤️ by the Tour Route Planner Team
+</p>
