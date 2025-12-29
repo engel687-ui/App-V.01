@@ -3,17 +3,18 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Calendar, 
-  MapPin, 
-  Clock, 
-  ArrowRight, 
-  MoreHorizontal, 
+import {
+  Calendar,
+  MapPin,
+  Clock,
+  ArrowRight,
+  MoreHorizontal,
   Car,
   CheckCircle2,
   Plus
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useNavigationState } from '@/hooks';
 
 // 1. YOUR PREFERRED MOCK DATA
 const mockTrips = {
@@ -72,6 +73,7 @@ const mockTrips = {
 
 export function MyTrips() {
   const navigate = useNavigate();
+  const { resumeNavigation } = useNavigationState();
   const [savedTrips, setSavedTrips] = useState<any[]>([]);
 
   // 2. LOGIC TO READ SAVED TRIPS FROM BROWSER STORAGE
@@ -140,7 +142,7 @@ export function MyTrips() {
                       </div>
 
                       <div className="mt-6 flex justify-end">
-                        <Button onClick={() => navigate('/navigation')}>
+                        <Button onClick={() => resumeNavigation(trip.id)}>
                           Resume Navigation <ArrowRight className="h-4 w-4 ml-2" />
                         </Button>
                       </div>

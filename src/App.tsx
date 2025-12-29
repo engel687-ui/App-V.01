@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import { AppLayout } from '@/components/layout/AppLayout';
+import '@/i18n/config'; // Initialize i18n
 
 // --- SAFE MODE: Commented out the broken context ---
 // import { TripProvider } from '@/context/TripContext'; 

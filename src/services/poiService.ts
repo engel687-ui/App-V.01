@@ -125,6 +125,49 @@ const samplePOIs: POI[] = [
  */
 export const poiService = {
   /**
+   * Generate dynamic POIs around a location (for demo purposes)
+   */
+  generateNearbyPOIs(centerLat: number, centerLng: number, count: number = 15): POI[] {
+    const categories = [
+      { type: 'restaurant', names: ['Local Diner', 'Pizza Palace', 'Sushi Bar', 'Taco Stand', 'Coffee Shop'] },
+      { type: 'parking', names: ['Parking Garage', 'Street Parking', 'Mall Parking', 'Public Lot'] },
+      { type: 'gas-station', names: ['Shell Station', 'Chevron', '76 Gas', 'Arco'] },
+      { type: 'attraction', names: ['Scenic Viewpoint', 'Historic Site', 'Park', 'Museum'] },
+      { type: 'shopping', names: ['Shopping Mall', 'Convenience Store', 'Grocery Store', 'Boutique'] },
+    ];
+
+    const pois: POI[] = [];
+
+    for (let i = 0; i < count; i++) {
+      const category = categories[i % categories.length];
+      const nameIndex = Math.floor(Math.random() * category.names.length);
+
+      // Generate random location within ~5km radius
+      const latOffset = (Math.random() - 0.5) * 0.09; // ~5km
+      const lngOffset = (Math.random() - 0.5) * 0.09;
+
+      pois.push({
+        id: `poi-generated-${i}`,
+        name: `${category.names[nameIndex]} ${i + 1}`,
+        type: category.type,
+        location: {
+          lat: centerLat + latOffset,
+          lng: centerLng + lngOffset,
+        },
+        address: `${Math.floor(Math.random() * 9999) + 1} Main St`,
+        rating: 3.5 + Math.random() * 1.5,
+        reviews: Math.floor(Math.random() * 500) + 10,
+        hours: Math.random() > 0.3 ? '9 AM - 9 PM' : '24/7',
+        amenities: ['WiFi', 'Parking', 'Restrooms'].slice(0, Math.floor(Math.random() * 3) + 1),
+        visitStatus: 'not-visited' as const,
+        paymentMethods: ['Credit Card', 'Cash'],
+      });
+    }
+
+    return pois;
+  },
+
+  /**
    * Get all POIs
    * @returns Promise<POI[]> - All POIs
    */
@@ -193,21 +236,51 @@ export const poiService = {
     lng: number,
     radiusKm: number = 5
   ): Promise<POI[]> {
-    const pois = await this.getAllPOIs();
+    console.log('[POIService] searchNearby called with:', { lat, lng, radiusKm });
+
+    let pois = await this.getAllPOIs();
+    console.log('[POIService] Total static POIs available:', pois.length);
 
     // Calculate distance and filter
-    const nearby = pois
-      .map((poi) => ({
+    const withDistances = pois.map((poi) => {
+      const distance = this.calculateDistance(
+        lat,
+        lng,
+        poi.location.lat,
+        poi.location.lng
+      );
+      console.log(`[POIService] Distance to ${poi.name}:`, distance.toFixed(2), 'km');
+      return {
         ...poi,
-        distance: this.calculateDistance(
-          lat,
-          lng,
-          poi.location.lat,
-          poi.location.lng
-        ),
-      }))
-      .filter((poi) => poi.distance <= radiusKm)
+        distance,
+      };
+    });
+
+    let nearby = withDistances
+      .filter((poi) => {
+        const isNearby = poi.distance <= radiusKm;
+        if (!isNearby) {
+          console.log(`[POIService] Filtered out ${poi.name} (${poi.distance.toFixed(2)}km > ${radiusKm}km)`);
+        }
+        return isNearby;
+      })
       .sort((a, b) => a.distance - b.distance);
+
+    // If no POIs found nearby, generate some around the user's location
+    if (nearby.length === 0) {
+      console.log('[POIService] No static POIs nearby, generating dynamic POIs around user location');
+      const generated = this.generateNearbyPOIs(lat, lng, 20);
+
+      // Calculate distances for generated POIs
+      nearby = generated.map((poi) => ({
+        ...poi,
+        distance: this.calculateDistance(lat, lng, poi.location.lat, poi.location.lng),
+      })).sort((a, b) => a.distance - b.distance);
+
+      console.log('[POIService] Generated POIs:', nearby.length);
+    }
+
+    console.log('[POIService] Final nearby POIs:', nearby.length, nearby.map(p => ({ name: p.name, distance: p.distance.toFixed(2) + 'km' })));
 
     return nearby;
   },

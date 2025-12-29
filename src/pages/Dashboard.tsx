@@ -5,17 +5,23 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
-  MapPin, Navigation, Clock, Battery, Zap, Sun, Car, User, 
-  Activity, Play, Plus, Youtube, Utensils, Map, Star, Tent, 
-  Settings2, Eye, EyeOff, TrendingUp, Bot, Heart, Mountain, 
-  Palette, Ticket
+  MapPin, Navigation, Clock, Battery, Zap, Sun, Car, User,
+  Activity, Play, Plus, Youtube, Utensils, Map, Star, Tent,
+  Settings2, Eye, EyeOff, TrendingUp, Bot, Heart, Mountain,
+  Palette, Ticket, Sparkles, Droplets, Wind, Thermometer, Cloud
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { QuickPlanDialog } from '@/components/QuickPlanDialog';
 import { AIItineraryWizard } from '@/components/wizard/AIItineraryWizard';
 import { CurrentStatusWidget } from '@/components/CurrentStatusWidget';
 import { NextStopWidget } from '@/components/NextStopWidget';
-import { useDashboardStats, useCurrentTrip } from '@/hooks';
+import { NearbyPOIs } from '@/components/NearbyPOIs';
+import { TierBadge } from '@/components/TierBadge';
+import { useDashboardStats, useCurrentTrip, useGeolocation, usePOIToRoute, useNavigationState } from '@/hooks';
+import { useToast } from '@/hooks/use-toast';
+import { getUserMembership } from '@/lib/featureFlags';
+import { weatherService, type WeatherData } from '@/services/weatherService';
+import type { MembershipTier } from '@/types';
 
 // --- REMOVED CONTEXT IMPORT FOR SAFE MODE ---
 // import { useTrip } from '@/context/TripContext'; 
@@ -34,14 +40,96 @@ const formatDuration = (minutes?: number) => {
 };
 
 // --- COMPANION LOOKUP TABLE ---
-const COMPANION_DATA: Record<string, { name: string; icon: any; color: string; bg: string }> = {
-  tech: { name: 'Tech Droid', icon: Bot, color: 'text-indigo-600', bg: 'bg-indigo-100' },
-  guide: { name: 'Travel Bestie', icon: Heart, color: 'text-pink-600', bg: 'bg-pink-100' },
-  ranger: { name: 'Ranger Scout', icon: Mountain, color: 'text-emerald-600', bg: 'bg-emerald-100' },
-  foodie: { name: 'Flavor Scout', icon: Utensils, color: 'text-orange-600', bg: 'bg-orange-100' },
-  artist: { name: 'The Artist', icon: Palette, color: 'text-purple-600', bg: 'bg-purple-100' },
-  celebrity: { name: 'Star Spotter', icon: Star, color: 'text-yellow-600', bg: 'bg-yellow-100' },
-  event: { name: 'Event Pro', icon: Ticket, color: 'text-cyan-600', bg: 'bg-cyan-100' },
+const USE_DICEBEAR_AVATARS = true; // Toggle this to false to use icons only
+
+const COMPANION_DATA: Record<string, {
+  name: string;
+  icon: any;
+  color: string;
+  bg: string;
+  description: string;
+  personality: string;
+  expertise: string[];
+  avatarUrl: string;
+  avatarStyle: string;
+}> = {
+  tech: {
+    name: 'Tech Droid',
+    icon: Bot,
+    color: 'text-indigo-600',
+    bg: 'bg-indigo-100',
+    description: 'Precise, logical, and helpful AI companion',
+    personality: 'Analytical and detail-oriented with a focus on efficiency',
+    expertise: ['Route optimization', 'Technical specifications', 'Data-driven recommendations', 'Real-time traffic analysis'],
+    avatarUrl: 'https://api.dicebear.com/9.x/bottts/svg?seed=TechDroid&backgroundColor=c7d2fe',
+    avatarStyle: 'bottts'
+  },
+  guide: {
+    name: 'Travel Bestie',
+    icon: Heart,
+    color: 'text-pink-600',
+    bg: 'bg-pink-100',
+    description: 'Friendly, enthusiastic travel companion',
+    personality: 'Warm and personable with local insider knowledge',
+    expertise: ['Hidden gems', 'Local culture', 'Photo spots', 'Social travel tips', 'Meeting locals'],
+    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=fbcfe8',
+    avatarStyle: 'avataaars'
+  },
+  ranger: {
+    name: 'Ranger Scout',
+    icon: Mountain,
+    color: 'text-emerald-600',
+    bg: 'bg-emerald-100',
+    description: 'Outdoor adventure and nature expert',
+    personality: 'Adventurous and conservation-focused',
+    expertise: ['Hiking trails', 'National parks', 'Wildlife spotting', 'Camping sites', 'Outdoor safety'],
+    avatarUrl: 'https://api.dicebear.com/7.x/adventurer/svg?seed=RangerScout&backgroundColor=a7f3d0',
+    avatarStyle: 'adventurer'
+  },
+  foodie: {
+    name: 'Flavor Scout',
+    icon: Utensils,
+    color: 'text-orange-600',
+    bg: 'bg-orange-100',
+    description: 'Culinary expert and food lover',
+    personality: 'Passionate about cuisine and local flavors',
+    expertise: ['Local restaurants', 'Food trucks', 'Farmers markets', 'Regional specialties', 'Dietary options'],
+    avatarUrl: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23fed7aa"/><text x="50" y="50" text-anchor="middle" dominant-baseline="central" font-size="75">🧑‍🍳</text></svg>',
+    avatarStyle: 'emoji'
+  },
+  artist: {
+    name: 'The Artist',
+    icon: Palette,
+    color: 'text-purple-600',
+    bg: 'bg-purple-100',
+    description: 'Creative guide for scenic and artistic routes',
+    personality: 'Imaginative and aesthetically driven',
+    expertise: ['Scenic viewpoints', 'Art galleries', 'Architecture', 'Photography spots', 'Street art'],
+    avatarUrl: 'https://api.dicebear.com/7.x/lorelei/svg?seed=TheArtist&backgroundColor=e9d5ff',
+    avatarStyle: 'lorelei'
+  },
+  celebrity: {
+    name: 'Star Spotter',
+    icon: Star,
+    color: 'text-yellow-600',
+    bg: 'bg-yellow-100',
+    description: 'Pop culture and entertainment specialist',
+    personality: 'Trendy and in-the-know about hotspots',
+    expertise: ['Filming locations', 'Celebrity hotspots', 'Trendy venues', 'Instagram-worthy spots', 'Pop culture sites'],
+    avatarUrl: 'https://api.dicebear.com/9.x/avataaars/svg?seed=StarSpotter&backgroundColor=fef3c7&clip=true',
+    avatarStyle: 'avataaars'
+  },
+  event: {
+    name: 'Event Pro',
+    icon: Ticket,
+    color: 'text-cyan-600',
+    bg: 'bg-cyan-100',
+    description: 'Festival and event planning expert',
+    personality: 'Organized and up-to-date on local happenings',
+    expertise: ['Local events', 'Festivals', 'Concerts', 'Sports games', 'Seasonal activities'],
+    avatarUrl: 'https://api.dicebear.com/9.x/adventurer/svg?seed=EventPro&backgroundColor=b6e3f4,c0aede,d1d4f9',
+    avatarStyle: 'adventurer'
+  },
 };
 
 // --- MOCK DATA FOR TRENDING (Stable) ---
@@ -79,7 +167,7 @@ const getSafeString = (value: any, fallback: string) => {
 
 export function Dashboard() {
   const navigate = useNavigate();
-  
+
   // --- MOCK PROFILE (Safe Mode) ---
   // This replaces the Context hook to prevent crashes
   const userProfile = {
@@ -92,6 +180,9 @@ export function Dashboard() {
   // --- HOOKS ---
   const { stats, loading: statsLoading, error: statsError } = useDashboardStats();
   const { trip: currentTripRaw, isActive, elapsedTime } = useCurrentTrip();
+  const { addPOIToRoute } = usePOIToRoute();
+  const { resumeNavigation } = useNavigationState();
+  const { toast } = useToast();
 
   // --- LOCAL STATE ---
   const [visibleSections, setVisibleSections] = useState({
@@ -102,6 +193,56 @@ export function Dashboard() {
     statusWidgets: true,
     trending: true
   });
+
+  // --- USER TIER STATE ---
+  const [userTier, setUserTier] = useState<MembershipTier>('free');
+
+  // --- WEATHER STATE ---
+  const [weather, setWeather] = useState<WeatherData | null>(null);
+  const [weatherLoading, setWeatherLoading] = useState(false);
+
+  // --- GPS TRACKING ---
+  const { position: gpsPosition } = useGeolocation({
+    watch: true,
+    immediate: true,
+  });
+
+  // Initialize user tier on mount
+  React.useEffect(() => {
+    // In production, get from auth context
+    const userId = 'test@example.com'; // Replace with actual authenticated user
+    const tier = getUserMembership(userId);
+    setUserTier(tier);
+  }, []);
+
+  // Fetch weather based on GPS coordinates or fallback to LA
+  React.useEffect(() => {
+    const fetchWeather = async () => {
+      setWeatherLoading(true);
+      try {
+        let weatherData: WeatherData;
+
+        if (gpsPosition) {
+          // Use GPS coordinates
+          weatherData = await weatherService.getWeatherByCoordinates(
+            gpsPosition.latitude,
+            gpsPosition.longitude
+          );
+        } else {
+          // Fallback to Los Angeles
+          weatherData = await weatherService.getWeatherByCity('Los Angeles,US');
+        }
+
+        setWeather(weatherData);
+      } catch (error) {
+        console.error('Failed to fetch weather:', error);
+      } finally {
+        setWeatherLoading(false);
+      }
+    };
+
+    fetchWeather();
+  }, [gpsPosition]); // Re-fetch when GPS position changes
 
   const toggleSection = (section: keyof typeof visibleSections) => {
     setVisibleSections(prev => ({ ...prev, [section]: !prev[section] }));
@@ -157,21 +298,162 @@ export function Dashboard() {
           <p className="text-slate-500 mt-1 text-lg">Ready for your next adventure along the Pacific Coast?</p>
         </div>
         <div className="flex items-center gap-3">
+
+             {/* TIER BADGE - Compact next to Voice Guide */}
+             <TierBadge
+               tier={userTier}
+               compact={true}
+             />
              
-             {/* ACTIVE COMPANION BADGE (Dynamic) */}
-             <div className={`hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full border ${activeCompanion.bg} border-transparent shadow-sm`}>
-                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mr-1">Current Guide:</span>
-                <activeCompanion.icon className={`h-4 w-4 ${activeCompanion.color}`} />
-                <span className={`text-sm font-bold ${activeCompanion.color}`}>
-                  {activeCompanion.name}
-                </span>
-             </div>
+             {/* ACTIVE COMPANION BADGE (Dynamic) with Popover */}
+             <Popover>
+               <PopoverTrigger asChild>
+                 <div className={`hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full border ${activeCompanion.bg} border-transparent shadow-sm cursor-pointer hover:shadow-md transition-shadow`}>
+                   <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mr-1">Current Guide:</span>
+                   <activeCompanion.icon className={`h-4 w-4 ${activeCompanion.color}`} />
+                   <span className={`text-sm font-bold ${activeCompanion.color}`}>
+                     {activeCompanion.name}
+                   </span>
+                 </div>
+               </PopoverTrigger>
+               <PopoverContent className="w-80" align="end">
+                 <div className="space-y-3">
+                   {/* Header */}
+                   <div className="flex items-center gap-3 border-b pb-2">
+                     {USE_DICEBEAR_AVATARS ? (
+                       <img
+                         src={activeCompanion.avatarUrl}
+                         alt={activeCompanion.name}
+                         className="w-12 h-12 rounded-full border-2 border-white shadow-md"
+                       />
+                     ) : (
+                       <div className={`p-2.5 rounded-full ${activeCompanion.bg}`}>
+                         <activeCompanion.icon className={`h-5 w-5 ${activeCompanion.color}`} />
+                       </div>
+                     )}
+                     <div>
+                       <h4 className={`font-bold text-sm ${activeCompanion.color}`}>
+                         {activeCompanion.name}
+                       </h4>
+                       <p className="text-[10px] text-muted-foreground uppercase tracking-wide">AI Travel Companion</p>
+                     </div>
+                   </div>
+
+                   {/* Description */}
+                   <p className="text-xs text-slate-600 italic">{activeCompanion.description}</p>
+
+                   {/* Personality */}
+                   <div>
+                     <p className="text-xs font-semibold text-slate-700 uppercase tracking-wide mb-1">Personality:</p>
+                     <p className="text-xs text-slate-600 leading-relaxed">{activeCompanion.personality}</p>
+                   </div>
+
+                   {/* Expertise */}
+                   <div>
+                     <p className="text-xs font-semibold text-slate-700 uppercase tracking-wide mb-1.5">Areas of Expertise:</p>
+                     <div className="space-y-1">
+                       {activeCompanion.expertise.map((skill, idx) => (
+                         <div key={idx} className="flex items-start gap-2">
+                           <div className={`mt-1 w-1 h-1 rounded-full ${activeCompanion.bg} border-2 ${activeCompanion.color.replace('text-', 'border-')}`} />
+                           <p className="text-xs text-slate-600 leading-relaxed">{skill}</p>
+                         </div>
+                       ))}
+                     </div>
+                   </div>
+
+                   {/* Change Guide CTA */}
+                   <div className={`mt-3 p-2 rounded-md ${activeCompanion.bg}`}>
+                     <p className="text-[10px] text-slate-600 leading-relaxed">
+                       <strong>Tip:</strong> You can change your AI Guide in{' '}
+                       <button
+                         onClick={() => navigate('/profile')}
+                         className={`underline font-semibold ${activeCompanion.color} hover:opacity-80`}
+                       >
+                         Profile & Settings
+                       </button>
+                     </p>
+                   </div>
+                 </div>
+               </PopoverContent>
+             </Popover>
 
              {/* WEATHER */}
-             <div className="hidden md:flex items-center gap-2 text-sm font-medium bg-white shadow-sm text-slate-700 px-4 py-2 rounded-full border">
-                <Sun className="h-4 w-4 text-orange-500" />
-                <span>72°F</span>
-             </div>
+             <Popover>
+               <PopoverTrigger asChild>
+                 <div className="hidden md:flex items-center gap-2 text-sm font-medium bg-white shadow-sm text-slate-700 px-4 py-2 rounded-full border cursor-pointer hover:bg-gray-50 transition-colors">
+                    <Sun className="h-4 w-4 text-orange-500" />
+                    {weatherLoading ? (
+                      <div className="h-4 w-24 bg-gray-200 rounded animate-pulse" />
+                    ) : weather ? (
+                      <span>{weather.description}, {Math.round((weather.temperature * 9) / 5 + 32)}°F</span>
+                    ) : (
+                      <div className="h-4 w-24 bg-gray-200 rounded animate-pulse" />
+                    )}
+                 </div>
+               </PopoverTrigger>
+               {weather && (
+                 <PopoverContent className="w-64" align="end">
+                   <div className="space-y-3">
+                     {/* Header */}
+                     <div className="border-b pb-2">
+                       <h4 className="font-semibold text-sm text-gray-900">Los Angeles Weather</h4>
+                       <p className="text-xs text-gray-500">Current conditions</p>
+                     </div>
+
+                     {/* Temperature */}
+                     <div className="flex items-center gap-3">
+                       <div className="p-2 bg-blue-50 rounded-full">
+                         <Thermometer className="h-4 w-4 text-blue-600" />
+                       </div>
+                       <div className="flex-1">
+                         <p className="text-xs text-gray-500">Temperature</p>
+                         <p className="text-sm font-semibold text-gray-900">
+                           {Math.round((weather.temperature * 9) / 5 + 32)}°F
+                           <span className="text-xs text-gray-500 ml-2">
+                             (Feels like {Math.round((weather.feelsLike * 9) / 5 + 32)}°F)
+                           </span>
+                         </p>
+                       </div>
+                     </div>
+
+                     {/* Humidity */}
+                     <div className="flex items-center gap-3">
+                       <div className="p-2 bg-cyan-50 rounded-full">
+                         <Droplets className="h-4 w-4 text-cyan-600" />
+                       </div>
+                       <div className="flex-1">
+                         <p className="text-xs text-gray-500">Humidity</p>
+                         <p className="text-sm font-semibold text-gray-900">{weather.humidity}%</p>
+                       </div>
+                     </div>
+
+                     {/* Wind Speed */}
+                     <div className="flex items-center gap-3">
+                       <div className="p-2 bg-gray-50 rounded-full">
+                         <Wind className="h-4 w-4 text-gray-600" />
+                       </div>
+                       <div className="flex-1">
+                         <p className="text-xs text-gray-500">Wind Speed</p>
+                         <p className="text-sm font-semibold text-gray-900">
+                           {(weather.windSpeed * 2.237).toFixed(1)} mph
+                         </p>
+                       </div>
+                     </div>
+
+                     {/* Weather Condition */}
+                     <div className="flex items-center gap-3">
+                       <div className="p-2 bg-yellow-50 rounded-full">
+                         <Cloud className="h-4 w-4 text-yellow-600" />
+                       </div>
+                       <div className="flex-1">
+                         <p className="text-xs text-gray-500">Conditions</p>
+                         <p className="text-sm font-semibold text-gray-900">{weather.description}</p>
+                       </div>
+                     </div>
+                   </div>
+                 </PopoverContent>
+               )}
+             </Popover>
              
              {/* CUSTOMIZE BUTTON */}
              <Popover>
@@ -388,7 +670,23 @@ export function Dashboard() {
                       </div>
                       
                       <div className="flex flex-col sm:flex-row gap-4 w-full xl:w-auto">
-                         <Button size="lg" className="h-16 text-lg bg-white text-slate-900 hover:bg-slate-100 font-bold shadow-xl px-8" onClick={() => navigate('/navigation')}>
+                         <Button
+                           size="lg"
+                           className="h-16 text-lg bg-white text-slate-900 hover:bg-slate-100 font-bold shadow-xl px-8"
+                           onClick={() => {
+                             console.log('[Dashboard] Resume Drive clicked, trip:', currentTrip);
+                             if (currentTrip?.id) {
+                               resumeNavigation(currentTrip.id);
+                             } else {
+                               console.error('[Dashboard] No trip ID available');
+                               toast({
+                                 title: "Error",
+                                 description: "Unable to resume navigation. Trip data not found.",
+                                 variant: "destructive",
+                               });
+                             }
+                           }}
+                         >
                             <Play className="h-6 w-6 mr-2 text-green-600" /> Resume Drive
                          </Button>
                          <Button size="lg" variant="outline" className="h-16 text-lg border-white/30 bg-black/20 text-white hover:bg-white/20 backdrop-blur-md px-8" onClick={() => navigate('/trips')}>
@@ -442,11 +740,22 @@ export function Dashboard() {
               </div>
             )}
 
+            {/* NEARBY POIS - Always visible with GPS */}
+            {visibleSections.statusWidgets && (
+              <div className="w-full animate-in fade-in slide-in-from-bottom-8">
+                <NearbyPOIs
+                  radiusKm={10}
+                  showCategories={true}
+                  onAddToRoute={addPOIToRoute}
+                />
+              </div>
+            )}
+
         </div>
       </div>
 
       {/* ------------------- SECTION 2: DISCOVERY & INSPIRATION (Below Fold) ------------------- */}
-      
+
       {/* 4. THE LAYOUT DIVIDER */}
       {visibleSections.trending && (
         <div className="relative my-10">

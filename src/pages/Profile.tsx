@@ -43,14 +43,72 @@ interface ToastNotification {
 }
 
 // --- DATA DEFINITIONS ---
+const USE_DICEBEAR_AVATARS = true; // Toggle to false to use icons only
+
 const COMPANIONS = [
-  { id: 'tech', name: 'Tech Droid', role: 'The Optimizer', desc: 'Precise, logical, and obsessed with efficiency.', color: 'bg-indigo-100 text-indigo-600', icon: Bot },
-  { id: 'guide', name: 'Local Guide', role: 'The Bestie', desc: 'Knows the best photo ops and hidden cafes.', color: 'bg-pink-100 text-pink-600', icon: Heart },
-  { id: 'ranger', name: 'Ranger Scout', role: 'The Explorer', desc: 'Focuses on nature, safety, and trails.', color: 'bg-emerald-100 text-emerald-600', icon: Mountain },
-  { id: 'foodie', name: 'Flavor Scout', role: 'The Bon Vivant', desc: 'Expert on local bites, food fairs, and hidden bars.', color: 'bg-orange-100 text-orange-600', icon: Utensils },
-  { id: 'artist', name: 'The Artist', role: 'The Aesthete', desc: 'Loves Mid-Century Modernism and Neon Art.', color: 'bg-purple-100 text-purple-600', icon: Palette },
-  { id: 'celebrity', name: 'Star Spotter', role: 'The Insider', desc: 'Expert on celebrity estates and filming locations.', color: 'bg-yellow-100 text-yellow-700', icon: Star },
-  { id: 'event', name: 'The Event Pro', role: 'The Fixer', desc: 'Finds the best sports, concerts, and theme park deals.', color: 'bg-cyan-100 text-cyan-600', icon: Ticket },
+  {
+    id: 'tech',
+    name: 'Tech Droid',
+    role: 'The Optimizer',
+    desc: 'Precise, logical, and obsessed with efficiency.',
+    color: 'bg-indigo-100 text-indigo-600',
+    icon: Bot,
+    avatarUrl: 'https://api.dicebear.com/9.x/bottts/svg?seed=TechDroid&backgroundColor=c7d2fe'
+  },
+  {
+    id: 'guide',
+    name: 'Local Guide',
+    role: 'The Bestie',
+    desc: 'Knows the best photo ops and hidden cafes.',
+    color: 'bg-pink-100 text-pink-600',
+    icon: Heart,
+    avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=fbcfe8'
+  },
+  {
+    id: 'ranger',
+    name: 'Ranger Scout',
+    role: 'The Explorer',
+    desc: 'Focuses on nature, safety, and trails.',
+    color: 'bg-emerald-100 text-emerald-600',
+    icon: Mountain,
+    avatarUrl: 'https://api.dicebear.com/7.x/adventurer/svg?seed=RangerScout&backgroundColor=a7f3d0'
+  },
+  {
+    id: 'foodie',
+    name: 'Flavor Scout',
+    role: 'The Bon Vivant',
+    desc: 'Expert on local bites, food fairs, and hidden bars.',
+    color: 'bg-orange-100 text-orange-600',
+    icon: Utensils,
+    avatarUrl: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23fed7aa"/><text x="50" y="50" text-anchor="middle" dominant-baseline="central" font-size="75">🧑‍🍳</text></svg>'
+  },
+  {
+    id: 'artist',
+    name: 'The Artist',
+    role: 'The Aesthete',
+    desc: 'Loves Mid-Century Modernism and Neon Art.',
+    color: 'bg-purple-100 text-purple-600',
+    icon: Palette,
+    avatarUrl: 'https://api.dicebear.com/7.x/lorelei/svg?seed=TheArtist&backgroundColor=e9d5ff'
+  },
+  {
+    id: 'celebrity',
+    name: 'Star Spotter',
+    role: 'The Insider',
+    desc: 'Expert on celebrity estates and filming locations.',
+    color: 'bg-yellow-100 text-yellow-700',
+    icon: Star,
+    avatarUrl: 'https://api.dicebear.com/9.x/avataaars/svg?seed=StarSpotter&backgroundColor=fef3c7&clip=true'
+  },
+  {
+    id: 'event',
+    name: 'The Event Pro',
+    role: 'The Fixer',
+    desc: 'Finds the best sports, concerts, and theme park deals.',
+    color: 'bg-cyan-100 text-cyan-600',
+    icon: Ticket,
+    avatarUrl: 'https://api.dicebear.com/9.x/adventurer/svg?seed=EventPro&backgroundColor=b6e3f4,c0aede,d1d4f9'
+  },
 ];
 
 const EXTENDED_TRAVEL_STYLES = [
@@ -248,9 +306,17 @@ export function Profile() {
                  }}
                  className={`relative group flex flex-col items-center text-center p-5 rounded-2xl border-2 transition-all duration-300 ${isSelected ? 'border-blue-600 bg-white shadow-xl scale-105 z-10 ring-4 ring-blue-50' : 'border-slate-100 bg-white hover:border-blue-200 hover:shadow-md'}`}
                >
-                 <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-4 transition-transform group-hover:scale-110 ${comp.color}`}>
-                    <comp.icon className="h-7 w-7" />
-                 </div>
+                 {USE_DICEBEAR_AVATARS ? (
+                   <img
+                     src={comp.avatarUrl}
+                     alt={comp.name}
+                     className="w-14 h-14 rounded-full mb-4 transition-transform group-hover:scale-110 border-2 border-white shadow-md"
+                   />
+                 ) : (
+                   <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-4 transition-transform group-hover:scale-110 ${comp.color}`}>
+                      <comp.icon className="h-7 w-7" />
+                   </div>
+                 )}
                  <h3 className={`font-bold text-xs ${isSelected ? 'text-slate-900' : 'text-slate-700'}`}>{comp.name}</h3>
                  <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 mb-2">{comp.role}</span>
                  <p className="text-[10px] text-slate-500 leading-relaxed px-1 min-h-[3.5rem]">{comp.desc}</p>

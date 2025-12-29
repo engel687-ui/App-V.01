@@ -2,21 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Menu, 
-  Navigation, 
-  Clock, 
-  Cloud, 
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import {
+  Menu,
+  Navigation,
+  Clock,
+  Cloud,
   Mic,
   MicOff,
   Volume2,
   Settings,
   X,
-  Sparkles
+  Sparkles,
+  Droplets,
+  Wind,
+  Thermometer
 } from 'lucide-react';
 import { startListening, stopListening } from '@/lib/voice';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { VoiceAssistant } from '@/components/tour/VoiceAssistant';
+import { useGeolocation } from '@/hooks';
 import type { Tour, RouteStop, TourPreferences } from '@/types';
 
 interface HeaderProps {
@@ -29,8 +34,8 @@ interface HeaderProps {
   weather?: { temperature: number; description: string };
 }
 
-export function Header({ 
-  onMenuClick, 
+export function Header({
+  onMenuClick,
   showMenuButton = false,
   activeTour,
   currentStop,
@@ -41,9 +46,25 @@ export function Header({
   const [isVoiceActive, setIsVoiceActive] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [showAssistant, setShowAssistant] = useState(false);
-  
+  const [currentTime, setCurrentTime] = useState(new Date());
+
   // New state to simulate AI "Thinking" vs "Active"
   const [isAiCalculating, setIsAiCalculating] = useState(false);
+
+  // GPS tracking
+  const { position: gpsPosition, error: gpsError, loading: gpsLoading } = useGeolocation({
+    watch: true,
+    immediate: true,
+  });
+
+  // Update time every minute
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000); // Update every minute
+
+    return () => clearInterval(timer);
+  }, []);
 
   // Simulate AI background activity (e.g., checking traffic every 30 seconds)
   useEffect(() => {
@@ -105,20 +126,178 @@ export function Header({
           ) : (
             <div className="text-sm font-semibold text-primary">Iconic Pathways USA AI</div>
           )}
-          <div className="flex items-center space-x-2">
-            <Navigation className="h-4 w-4 text-green-500" />
-            <span className="text-sm font-medium">GPS Active</span>
-          </div>
+          <Popover>
+            <PopoverTrigger asChild>
+              <div className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 px-2 py-1 rounded transition-colors">
+                {gpsLoading ? (
+                  <>
+                    <Navigation className="h-4 w-4 text-yellow-500 animate-pulse" />
+                    <span className="text-sm font-medium text-yellow-600">GPS Searching...</span>
+                  </>
+                ) : gpsError ? (
+                  <>
+                    <Navigation className="h-4 w-4 text-red-500" />
+                    <span className="text-sm font-medium text-red-600">GPS Unavailable</span>
+                  </>
+                ) : gpsPosition ? (
+                  <>
+                    <Navigation className="h-4 w-4 text-green-500" />
+                    <span className="text-sm font-medium text-green-600">GPS Active</span>
+                  </>
+                ) : (
+                  <>
+                    <Navigation className="h-4 w-4 text-gray-400" />
+                    <span className="text-sm font-medium text-gray-500">GPS Off</span>
+                  </>
+                )}
+              </div>
+            </PopoverTrigger>
+            {gpsPosition && (
+              <PopoverContent className="w-72" align="start">
+                <div className="space-y-3">
+                  {/* Header */}
+                  <div className="border-b pb-2">
+                    <h4 className="font-semibold text-sm text-gray-900 flex items-center gap-2">
+                      <Navigation className="h-4 w-4 text-green-500" />
+                      GPS Location
+                    </h4>
+                    <p className="text-xs text-gray-500">Live tracking active</p>
+                  </div>
+
+                  {/* Coordinates */}
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">Coordinates</p>
+                    <p className="text-sm font-mono font-semibold text-gray-900">
+                      {gpsPosition.latitude.toFixed(6)}°N
+                    </p>
+                    <p className="text-sm font-mono font-semibold text-gray-900">
+                      {gpsPosition.longitude.toFixed(6)}°W
+                    </p>
+                  </div>
+
+                  {/* Accuracy */}
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">Accuracy</p>
+                    <p className="text-sm font-semibold text-gray-900">
+                      ±{Math.round(gpsPosition.accuracy)}m
+                    </p>
+                  </div>
+
+                  {/* Last Update */}
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">Last Update</p>
+                    <p className="text-sm font-semibold text-gray-900">
+                      {new Date(gpsPosition.timestamp).toLocaleTimeString()}
+                    </p>
+                  </div>
+                </div>
+              </PopoverContent>
+            )}
+            {gpsError && (
+              <PopoverContent className="w-72" align="start">
+                <div className="space-y-3">
+                  <div className="border-b pb-2">
+                    <h4 className="font-semibold text-sm text-red-900 flex items-center gap-2">
+                      <Navigation className="h-4 w-4 text-red-500" />
+                      GPS Error
+                    </h4>
+                  </div>
+                  <p className="text-sm text-gray-700">{gpsError.message}</p>
+                  <p className="text-xs text-gray-500">
+                    Please enable location permissions in your browser settings.
+                  </p>
+                </div>
+              </PopoverContent>
+            )}
+          </Popover>
           
           <div className="flex items-center space-x-2">
             <Clock className="h-4 w-4 text-blue-500" />
-            <span className="text-sm">2:34 PM</span>
+            <span className="text-sm">
+              {currentTime.toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+              })}
+            </span>
           </div>
           
-          <div className="flex items-center space-x-2">
-            <Cloud className="h-4 w-4 text-gray-500" />
-            <span className="text-sm">72°F</span>
-          </div>
+          <Popover>
+            <PopoverTrigger asChild>
+              <div className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 px-2 py-1 rounded transition-colors">
+                <Cloud className="h-4 w-4 text-gray-500" />
+                {weather ? (
+                  <span className="text-sm">
+                    {weather.description}, {Math.round((weather.temperature * 9) / 5 + 32)}°F
+                  </span>
+                ) : (
+                  <div className="h-4 w-20 bg-gray-200 rounded animate-pulse" />
+                )}
+              </div>
+            </PopoverTrigger>
+            {weather && (
+              <PopoverContent className="w-64" align="start">
+                <div className="space-y-3">
+                  {/* Header */}
+                  <div className="border-b pb-2">
+                    <h4 className="font-semibold text-sm text-gray-900">Los Angeles Weather</h4>
+                    <p className="text-xs text-gray-500">Current conditions</p>
+                  </div>
+
+                  {/* Temperature */}
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-blue-50 rounded-full">
+                      <Thermometer className="h-4 w-4 text-blue-600" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs text-gray-500">Temperature</p>
+                      <p className="text-sm font-semibold text-gray-900">
+                        {Math.round((weather.temperature * 9) / 5 + 32)}°F
+                        <span className="text-xs text-gray-500 ml-2">
+                          (Feels like {Math.round((weather.feelsLike * 9) / 5 + 32)}°F)
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Humidity */}
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-cyan-50 rounded-full">
+                      <Droplets className="h-4 w-4 text-cyan-600" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs text-gray-500">Humidity</p>
+                      <p className="text-sm font-semibold text-gray-900">{weather.humidity}%</p>
+                    </div>
+                  </div>
+
+                  {/* Wind Speed */}
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-gray-50 rounded-full">
+                      <Wind className="h-4 w-4 text-gray-600" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs text-gray-500">Wind Speed</p>
+                      <p className="text-sm font-semibold text-gray-900">
+                        {(weather.windSpeed * 2.237).toFixed(1)} mph
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Weather Condition */}
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-yellow-50 rounded-full">
+                      <Cloud className="h-4 w-4 text-yellow-600" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs text-gray-500">Conditions</p>
+                      <p className="text-sm font-semibold text-gray-900">{weather.description}</p>
+                    </div>
+                  </div>
+                </div>
+              </PopoverContent>
+            )}
+          </Popover>
         </div>
       </div>
 

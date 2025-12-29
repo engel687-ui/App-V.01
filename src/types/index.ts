@@ -19,6 +19,28 @@ export interface POI {
   category?: string;
 }
 
+export interface Route {
+  id: string;
+  name: string;
+  startLocation: { lat: number; lng: number };
+  endLocation: { lat: number; lng: number };
+  distance: number; // km
+  estimatedDuration: number; // hours
+  difficulty?: string;
+  scenery?: string;
+  bestTimeToVisit?: string;
+  highlights?: string[];
+  pois?: string[];
+  status: 'active' | 'archived' | 'draft';
+  createdAt: string;
+  orsData?: {
+    geometry?: [number, number][];
+    turnByTurnInstructions?: any[];
+    elevation?: number[];
+    surface?: string[];
+  };
+}
+
 // --- NEW INTERFACE FOR CONTACTS ---
 export interface EmergencyContact {
   id: string;
@@ -265,4 +287,149 @@ export interface Suggestion {
 // --- Extended TourPreferences ---
 export interface ExtendedTourPreferences extends TourPreferences {
   destination?: string;
+}
+
+// --- OPENROUTESERVICE API TYPES ---
+export interface ORSCoordinate {
+  lat: number;
+  lng: number;
+}
+
+export interface ORSDirectionsRequest {
+  coordinates: [number, number][]; // [lng, lat] format (ORS uses lng,lat!)
+  profile?: 'driving-car' | 'driving-hgv' | 'cycling-regular' | 'foot-walking';
+  units?: 'km' | 'mi';
+  language?: 'en';
+  geometry?: boolean;
+  instructions?: boolean;
+  elevation?: boolean;
+  extra_info?: string[];
+}
+
+export interface ORSDirectionsResponse {
+  routes: ORSRoute[];
+  metadata: {
+    query: any;
+    engine: any;
+  };
+}
+
+export interface ORSRoute {
+  summary: {
+    distance: number; // meters
+    duration: number; // seconds
+  };
+  geometry: {
+    coordinates: [number, number][]; // [lng, lat]
+    type: 'LineString';
+  };
+  segments: ORSSegment[];
+  way_points: number[];
+}
+
+export interface ORSSegment {
+  distance: number;
+  duration: number;
+  steps: ORSStep[];
+}
+
+export interface ORSStep {
+  distance: number;
+  duration: number;
+  type: number;
+  instruction: string;
+  name: string;
+  way_points: [number, number];
+}
+
+// Geocoding types
+export interface ORSGeocodeRequest {
+  text: string;
+  size?: number;
+  boundary_country?: string[];
+}
+
+export interface ORSGeocodeResponse {
+  features: ORSGeocodeFeature[];
+}
+
+export interface ORSGeocodeFeature {
+  geometry: {
+    coordinates: [number, number]; // [lng, lat]
+  };
+  properties: {
+    name: string;
+    label: string;
+    country: string;
+    region: string;
+    locality?: string;
+  };
+}
+
+// --- MEMBERSHIP & FEATURE FLAGS ---
+export type MembershipTier = 'free' | 'basic' | 'advanced' | 'expert' | 'test';
+
+export interface MembershipLimits {
+  maxSavedTrips: number | 'unlimited';
+  maxWaypointsPerTrip: number | 'unlimited';
+  monthlyRouteCalculations: number | 'unlimited';
+  maxOfflineTrips: number | 'unlimited';
+  features: FeatureAccess;
+}
+
+export interface FeatureAccess {
+  realTimeRouting: boolean;
+  routeOptimization?: boolean;
+  routeOptimizationAdvanced?: boolean;
+  geocoding?: boolean;
+  geocodingUnlimited?: boolean;
+  offlineAccess?: boolean;
+  offlineAutoSync?: boolean;
+  tripSharing?: boolean;
+  tripCollaboration?: boolean;
+  publicProfile?: boolean;
+  dataExport?: boolean;
+  exportFormats?: string[];
+  apiAccess?: boolean;
+  influencerContent?: 'sample' | 'full' | 'exclusive';
+  influencerContentCreation?: boolean;
+  aiMessages?: number | 'unlimited';
+  aiPriority?: boolean;
+  aiCustomTraining?: boolean;
+  safetyFeatures?: 'basic' | 'full';
+  liveTracking?: boolean;
+  analytics?: boolean;
+  evRouting?: boolean;
+  fuelOptimization?: boolean;
+  parkingFinder?: boolean;
+  flightTracking?: boolean;
+  arFeatures?: boolean;
+  whiteLabel?: boolean;
+  prioritySupport?: boolean;
+  betaAccess?: boolean;
+  debugMode?: boolean;
+  apiMonitoring?: boolean;
+}
+
+export interface UserUsage {
+  userId: string;
+  tier: MembershipTier;
+  currentMonth: string; // YYYY-MM
+  routeCalculations: number;
+  savedTrips: number;
+  offlineTrips: number;
+  lastReset: string;
+}
+
+export interface APIUsageRecord {
+  timestamp: number;
+  endpoint: string;
+  success: boolean;
+  cached: boolean;
+}
+
+export interface FeatureFlagConfig {
+  userId?: string;
+  userTier?: MembershipTier;
+  featureName: string;
 }

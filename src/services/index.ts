@@ -14,3 +14,6 @@
 export { routeService } from './routeService';
 export { poiService } from './poiService';
 export { tripService } from './tripService';
+export { openRouteService } from './openRouteService';
+export { geolocationService } from './geolocationService';
+export { favoritesService } from './favoritesService';

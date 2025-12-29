@@ -1,0 +1,204 @@
+{
+  "common": {
+    "appName": "यात्रा योजनाकार",
+    "loading": "लोड हो रहा है...",
+    "error": "त्रुटि",
+    "save": "सहेजें",
+    "cancel": "रद्द करें",
+    "delete": "हटाएं",
+    "edit": "संपादित करें",
+    "add": "जोड़ें",
+    "close": "बंद करें",
+    "back": "वापस",
+    "next": "अगला",
+    "confirm": "पुष्टि करें",
+    "search": "खोजें"
+  },
+  "navigation": {
+    "dashboard": "डैशबोर्ड",
+    "plan": "योजना",
+    "discover": "खोजें",
+    "guide": "AI गाइड",
+    "trips": "मेरी यात्राएं",
+    "favorites": "पसंदीदा",
+    "profile": "प्रोफ़ाइल",
+    "nearby": "आस-पास",
+    "emergency": "आपातकाल"
+  },
+  "dashboard": {
+    "title": "डैशबोर्ड",
+    "activeNavigation": "सक्रिय नेविगेशन",
+    "complete": "पूर्ण",
+    "resumeDrive": "यात्रा फिर से शुरू करें",
+    "viewMap": "मानचित्र देखें",
+    "whereToNext": "आगे कहाँ?",
+    "startNewAdventure": "आपकी AI-अनुकूलित यात्रा योजना तैयार है। आज ही एक नया रोमांच शुरू करें।",
+    "planNewTrip": "नई यात्रा की योजना बनाएं",
+    "currentStatus": "वर्तमान स्थिति",
+    "nextStop": "अगला पड़ाव",
+    "vehicleStatus": "वाहन की स्थिति",
+    "driverHealth": "ड्राइवर की स्थिति",
+    "nearbyPlaces": "आस-पास के स्थान"
+  },
+  "routePlanner": {
+    "title": "मार्ग योजनाकार",
+    "myTrip": "मेरी यात्रा",
+    "departure": "प्रस्थान",
+    "stops": "स्टॉप",
+    "departing": "प्रस्थान कर रहे हैं",
+    "arrival": "आगमन",
+    "addStop": "स्टॉप जोड़ें",
+    "remove": "हटाएं",
+    "chargeTo": "चार्ज करें",
+    "lunchStop": "दोपहर का भोजन",
+    "askCompanion": "यात्रा साथी से सुझाव के लिए पूछें..."
+  },
+  "quickPlan": {
+    "title": "त्वरित योजनाकार",
+    "description": "सेकंड में AI-संचालित सिफारिशों के साथ व्यक्तिगत मार्ग बनाएं।",
+    "routeName": "मार्ग का नाम (वैकल्पिक)",
+    "routeNamePlaceholder": "उदा. कैलिफोर्निया कोस्ट एडवेंचर",
+    "startLocation": "प्रारंभिक स्थान",
+    "startPlaceholder": "उदा. सैन फ्रांसिस्को, CA",
+    "endLocation": "गंतव्य",
+    "endPlaceholder": "उदा. लॉस एंजिल्स, CA",
+    "travelStyle": "यात्रा शैली",
+    "vehicleType": "वाहन का प्रकार",
+    "interests": "आपको क्या रुचिकर लगता है? (सभी लागू विकल्प चुनें)",
+    "createRoute": "मार्ग बनाएं",
+    "creatingRoute": "मार्ग बनाया जा रहा है...",
+    "routeCreated": "मार्ग बनाया गया!",
+    "routeReady": "आपका {{routeName}} मार्ग तैयार है। मार्ग योजनाकार खोला जा रहा है..."
+  },
+  "trips": {
+    "title": "मेरी यात्राएं",
+    "subtitle": "अपनी चल रही यात्राओं और यात्रा इतिहास का प्रबंधन करें।",
+    "active": "सक्रिय",
+    "upcoming": "आगामी",
+    "history": "इतिहास",
+    "noActiveTrips": "कोई सक्रिय यात्रा नहीं",
+    "readyToHitTheRoad": "सड़क पर निकलने के लिए तैयार हैं? नई यात्रा शुरू करें!",
+    "resumeNavigation": "नेविगेशन फिर से शुरू करें",
+    "viewItinerary": "यात्रा कार्यक्रम देखें",
+    "tripProgress": "यात्रा प्रगति",
+    "days": "दिन",
+    "miles": "मील",
+    "completed": "पूर्ण"
+  },
+  "poi": {
+    "nearby": "आस-पास",
+    "found": "मिले",
+    "filterOptions": "फ़िल्टर विकल्प",
+    "refineResults": "अपने खोज परिणामों को परिष्कृत करें",
+    "minimumRating": "न्यूनतम रेटिंग",
+    "maxPrice": "अधिकतम मूल्य/घंटा",
+    "clearFilters": "फ़िल्टर साफ़ करें",
+    "locationRequired": "स्थान पहुँच आवश्यक",
+    "enableLocation": "स्थान कैसे सक्षम करें:",
+    "enableStep1": "अपने ब्राउज़र के पते बार में स्थान आइकन पर क्लिक करें",
+    "enableStep2": "'अनुमति दें' या 'हमेशा अनुमति दें' चुनें",
+    "enableStep3": "पेज रिफ्रेश करें",
+    "categories": {
+      "all": "सभी",
+      "restaurants": "रेस्तरां",
+      "gas": "पेट्रोल पंप",
+      "parking": "पार्किंग",
+      "attractions": "आकर्षण",
+      "shopping": "खरीदारी"
+    },
+    "save": "सहेजें",
+    "saved": "सहेजा गया",
+    "addToRoute": "मार्ग में जोड़ें",
+    "directions": "दिशा-निर्देश",
+    "amenities": "सुविधाएं",
+    "paymentMethods": "भुगतान के तरीके",
+    "availability": "उपलब्धता",
+    "maxStay": "अधिकतम प्रवास",
+    "call": "कॉल करें",
+    "reserveParking": "पार्किंग आरक्षित करें",
+    "bookingComingSoon": "बुकिंग सुविधा जल्द आ रही है! अपनी जगह पहले से आरक्षित करें।",
+    "reserveNow": "अभी आरक्षित करें (जल्द आ रहा है)",
+    "makeReservation": "आरक्षण करें",
+    "tableBooking": "टेबल बुकिंग एकीकरण जल्द आ रहा है!",
+    "bookTable": "टेबल बुक करें (जल्द आ रहा है)"
+  },
+  "vehicle": {
+    "model": "मॉडल",
+    "battery": "बैटरी",
+    "range": "रेंज",
+    "viewChargingPlan": "चार्जिंग योजना देखें"
+  },
+  "driver": {
+    "condition": "स्थिति",
+    "fresh": "ताज़ा",
+    "tired": "थका हुआ",
+    "recommendation": "सिफारिश",
+    "goodToContinue": "ड्राइविंग जारी रखने के लिए अच्छा।",
+    "considerRest": "जल्द ही विश्राम लेने पर विचार करें।",
+    "findFood": "भोजन खोजें",
+    "restArea": "विश्राम क्षेत्र"
+  },
+  "weather": {
+    "currentWeather": "वर्तमान मौसम",
+    "feelsLike": "महसूस होता है",
+    "humidity": "आर्द्रता",
+    "wind": "हवा"
+  },
+  "emergency": {
+    "title": "आपातकाल",
+    "callEmergency": "आपातकालीन सेवाओं को कॉल करें",
+    "roadside": "सड़क किनारे सहायता",
+    "nearestHospital": "निकटतम अस्पताल"
+  },
+  "profile": {
+    "title": "प्रोफ़ाइल",
+    "personalInfo": "व्यक्तिगत जानकारी",
+    "preferences": "प्राथमिकताएं",
+    "language": "भाषा",
+    "selectLanguage": "अपनी पसंदीदा भाषा चुनें",
+    "notifications": "सूचनाएं",
+    "privacy": "गोपनीयता",
+    "logout": "लॉग आउट"
+  },
+  "units": {
+    "km": "किमी",
+    "mi": "मील",
+    "m": "मी",
+    "ft": "फीट",
+    "away": "दूर",
+    "hour": "घंटा",
+    "hours": "घंटे",
+    "minute": "मिनट",
+    "minutes": "मिनट"
+  },
+  "travelStyles": {
+    "adventure": {
+      "name": "रोमांच",
+      "description": "बाहरी गतिविधियां, पर्वतारोहण, कैंपिंग"
+    },
+    "luxury": {
+      "name": "लक्जरी",
+      "description": "उत्कृष्ट भोजन, प्रीमियम होटल, स्पा"
+    },
+    "family": {
+      "name": "परिवार",
+      "description": "बच्चों के लिए अनुकूल गतिविधियां, खेल के मैदान"
+    },
+    "budget": {
+      "name": "बजट",
+      "description": "किफायती विकल्प, मुफ्त आकर्षण"
+    },
+    "business": {
+      "name": "व्यवसाय",
+      "description": "कुशल यात्रा, कार्य-अनुकूल पड़ाव"
+    }
+  },
+  "interests": {
+    "restaurants": "रेस्तरां",
+    "attractions": "आकर्षण",
+    "gasStations": "पेट्रोल पंप",
+    "hotels": "होटल",
+    "parks": "पार्क",
+    "shopping": "खरीदारी"
+  }
+}

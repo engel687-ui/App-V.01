@@ -9,6 +9,9 @@
  */
 
 import { Route, POI } from '@/types';
+import { openRouteService } from './openRouteService';
+import { isFeatureEnabled } from '@/lib/featureFlags';
+import { incrementUsageCount } from '@/lib/featureFlags';
 
 // Sample route data (replace with your backend API calls)
 const sampleRoutes: Route[] = [
@@ -262,5 +265,136 @@ export const routeService = {
       .slice(0, limit)
       .map((stat) => routes.find((r) => r.id === stat?.id)!)
       .filter(Boolean);
+  },
+
+  /**
+   * Calculate route using OpenRouteService or fallback to mock
+   * This is the KEY integration point
+   *
+   * @param waypoints - Array of waypoint coordinates
+   * @param userId - User ID for feature flag check
+   * @returns Enhanced route data
+   */
+  async calculateRoute(
+    waypoints: { lat: number; lng: number }[],
+    userId?: string
+  ): Promise<{
+    distance: number; // km
+    duration: number; // hours
+    geometry?: [number, number][];
+    instructions?: any[];
+  }> {
+    // Check if user has access to real API
+    const useRealAPI = isFeatureEnabled('realTimeRouting', userId);
+
+    if (useRealAPI && openRouteService.isConfigured()) {
+      try {
+        const orsRoute = await openRouteService.getDirections(waypoints, 'driving-car', {
+          includeInstructions: true,
+          includeGeometry: true,
+        });
+
+        if (orsRoute) {
+          // Increment usage counter
+          if (userId) {
+            incrementUsageCount(userId, 'routeCalculations', 1);
+          }
+
+          return {
+            distance: orsRoute.summary.distance / 1000, // meters to km
+            duration: orsRoute.summary.duration / 3600, // seconds to hours
+            geometry: orsRoute.geometry.coordinates,
+            instructions: orsRoute.segments.flatMap(s => s.steps),
+          };
+        }
+      } catch (error) {
+        console.error('ORS route calculation failed, using fallback:', error);
+      }
+    }
+
+    // FALLBACK: Enhanced mock calculation
+    return this.calculateMockRoute(waypoints);
+  },
+
+  /**
+   * Enhanced mock route calculation
+   * More realistic than simple straight-line distance
+   */
+  calculateMockRoute(
+    waypoints: { lat: number; lng: number }[]
+  ): {
+    distance: number;
+    duration: number;
+    geometry?: [number, number][];
+  } {
+    let totalDistance = 0;
+
+    // Calculate distance between consecutive waypoints
+    for (let i = 0; i < waypoints.length - 1; i++) {
+      const d = this.haversineDistance(waypoints[i], waypoints[i + 1]);
+      totalDistance += d;
+    }
+
+    // Apply road factor (roads aren't straight lines)
+    const roadFactor = 1.3; // Assume roads are ~30% longer than straight line
+    const distance = totalDistance * roadFactor;
+
+    // Estimate duration (assume average 80 km/h, slower in cities)
+    const duration = distance / 80;
+
+    return {
+      distance,
+      duration,
+    };
+  },
+
+  /**
+   * Haversine formula for distance between two coordinates
+   */
+  haversineDistance(
+    coord1: { lat: number; lng: number },
+    coord2: { lat: number; lng: number }
+  ): number {
+    const R = 6371; // Earth's radius in km
+    const dLat = this.toRad(coord2.lat - coord1.lat);
+    const dLon = this.toRad(coord2.lng - coord1.lng);
+
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(this.toRad(coord1.lat)) *
+      Math.cos(this.toRad(coord2.lat)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  },
+
+  toRad(degrees: number): number {
+    return degrees * (Math.PI / 180);
+  },
+
+  /**
+   * Geocode address to coordinates
+   */
+  async geocodeAddress(
+    address: string,
+    userId?: string
+  ): Promise<{ lat: number; lng: number } | null> {
+    const useRealAPI = isFeatureEnabled('geocoding', userId);
+
+    if (useRealAPI && openRouteService.isConfigured()) {
+      try {
+        const result = await openRouteService.geocode(address, { country: 'US' });
+        if (result) {
+          return { lat: result.lat, lng: result.lng };
+        }
+      } catch (error) {
+        console.error('Geocoding failed:', error);
+      }
+    }
+
+    // Fallback: return null (UI should handle)
+    return null;
   },
 };

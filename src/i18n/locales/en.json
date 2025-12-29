@@ -1,0 +1,204 @@
+{
+  "common": {
+    "appName": "Tour Planner",
+    "loading": "Loading...",
+    "error": "Error",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "confirm": "Confirm",
+    "search": "Search"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "plan": "Plan",
+    "discover": "Discover",
+    "guide": "AI Guide",
+    "trips": "My Trips",
+    "favorites": "Favorites",
+    "profile": "Profile",
+    "nearby": "Nearby",
+    "emergency": "Emergency"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "activeNavigation": "ACTIVE NAVIGATION",
+    "complete": "Complete",
+    "resumeDrive": "Resume Drive",
+    "viewMap": "View Map",
+    "whereToNext": "Where to next?",
+    "startNewAdventure": "Your customized AI travel plan awaits. Start a new adventure today.",
+    "planNewTrip": "Plan New Trip",
+    "currentStatus": "Current Status",
+    "nextStop": "Next Stop",
+    "vehicleStatus": "Vehicle Status",
+    "driverHealth": "Driver Health",
+    "nearbyPlaces": "Nearby Places"
+  },
+  "routePlanner": {
+    "title": "Route Planner",
+    "myTrip": "My Iconic Trip",
+    "departure": "DEPARTURE",
+    "stops": "Stops",
+    "departing": "Departing",
+    "arrival": "Arrival",
+    "addStop": "ADD STOP",
+    "remove": "REMOVE",
+    "chargeTo": "Charge to",
+    "lunchStop": "Lunch Stop",
+    "askCompanion": "Ask Travel Bestie for suggestions..."
+  },
+  "quickPlan": {
+    "title": "Quick Route Planner",
+    "description": "Create a personalized route with AI-powered recommendations in seconds.",
+    "routeName": "Route Name (Optional)",
+    "routeNamePlaceholder": "e.g., California Coast Adventure",
+    "startLocation": "Start Location",
+    "startPlaceholder": "e.g., San Francisco, CA",
+    "endLocation": "End Location",
+    "endPlaceholder": "e.g., Los Angeles, CA",
+    "travelStyle": "Travel Style",
+    "vehicleType": "Vehicle Type",
+    "interests": "What interests you? (Select all that apply)",
+    "createRoute": "Create Route",
+    "creatingRoute": "Creating Route...",
+    "routeCreated": "Route Created!",
+    "routeReady": "Your {{routeName}} route is ready. Opening route planner..."
+  },
+  "trips": {
+    "title": "My Trips",
+    "subtitle": "Manage your ongoing adventures and trip history.",
+    "active": "Active",
+    "upcoming": "Upcoming",
+    "history": "History",
+    "noActiveTrips": "No active trips",
+    "readyToHitTheRoad": "Ready to hit the road? Start a new journey!",
+    "resumeNavigation": "Resume Navigation",
+    "viewItinerary": "View Itinerary",
+    "tripProgress": "Trip Progress",
+    "days": "Days",
+    "miles": "miles",
+    "completed": "Completed"
+  },
+  "poi": {
+    "nearby": "Nearby",
+    "found": "found",
+    "filterOptions": "Filter Options",
+    "refineResults": "Refine your search results",
+    "minimumRating": "Minimum Rating",
+    "maxPrice": "Max Price/Hour",
+    "clearFilters": "Clear Filters",
+    "locationRequired": "Location Access Required",
+    "enableLocation": "How to enable location:",
+    "enableStep1": "Click the location icon in your browser's address bar",
+    "enableStep2": "Select 'Allow' or 'Always allow'",
+    "enableStep3": "Refresh the page",
+    "categories": {
+      "all": "All",
+      "restaurants": "Restaurants",
+      "gas": "Gas Stations",
+      "parking": "Parking",
+      "attractions": "Attractions",
+      "shopping": "Shopping"
+    },
+    "save": "Save",
+    "saved": "Saved",
+    "addToRoute": "Add to Route",
+    "directions": "Directions",
+    "amenities": "Amenities",
+    "paymentMethods": "Payment Methods",
+    "availability": "Availability",
+    "maxStay": "Max Stay",
+    "call": "Call",
+    "reserveParking": "Reserve Parking",
+    "bookingComingSoon": "Booking functionality coming soon! Reserve your spot in advance.",
+    "reserveNow": "Reserve Now (Coming Soon)",
+    "makeReservation": "Make a Reservation",
+    "tableBooking": "Table booking integration coming soon!",
+    "bookTable": "Book Table (Coming Soon)"
+  },
+  "vehicle": {
+    "model": "Model",
+    "battery": "Battery",
+    "range": "Range",
+    "viewChargingPlan": "VIEW CHARGING PLAN"
+  },
+  "driver": {
+    "condition": "Condition",
+    "fresh": "Fresh",
+    "tired": "Tired",
+    "recommendation": "RECOMMENDATION",
+    "goodToContinue": "Good to continue driving.",
+    "considerRest": "Consider taking a rest break soon.",
+    "findFood": "Find Food",
+    "restArea": "Rest Area"
+  },
+  "weather": {
+    "currentWeather": "Current Weather",
+    "feelsLike": "Feels like",
+    "humidity": "Humidity",
+    "wind": "Wind"
+  },
+  "emergency": {
+    "title": "Emergency",
+    "callEmergency": "Call Emergency Services",
+    "roadside": "Roadside Assistance",
+    "nearestHospital": "Nearest Hospital"
+  },
+  "profile": {
+    "title": "Profile",
+    "personalInfo": "Personal Information",
+    "preferences": "Preferences",
+    "language": "Language",
+    "selectLanguage": "Select your preferred language",
+    "notifications": "Notifications",
+    "privacy": "Privacy",
+    "logout": "Logout"
+  },
+  "units": {
+    "km": "km",
+    "mi": "mi",
+    "m": "m",
+    "ft": "ft",
+    "away": "away",
+    "hour": "hour",
+    "hours": "hours",
+    "minute": "minute",
+    "minutes": "minutes"
+  },
+  "travelStyles": {
+    "adventure": {
+      "name": "Adventure",
+      "description": "Outdoor activities, hiking, camping"
+    },
+    "luxury": {
+      "name": "Luxury",
+      "description": "Fine dining, premium hotels, spas"
+    },
+    "family": {
+      "name": "Family",
+      "description": "Kid-friendly activities, playgrounds"
+    },
+    "budget": {
+      "name": "Budget",
+      "description": "Affordable options, free attractions"
+    },
+    "business": {
+      "name": "Business",
+      "description": "Efficient travel, work-friendly stops"
+    }
+  },
+  "interests": {
+    "restaurants": "Restaurants",
+    "attractions": "Attractions",
+    "gasStations": "Gas Stations",
+    "hotels": "Hotels",
+    "parks": "Parks",
+    "shopping": "Shopping"
+  }
+}

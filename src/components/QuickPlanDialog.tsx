@@ -21,6 +21,7 @@ import {
   Fuel
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigationState } from '@/hooks';
 import { fetchUserProfile } from '@/lib/user';
 
 interface Route {
@@ -78,6 +79,7 @@ export function QuickPlanDialog({ trigger, onRouteCreated }: QuickPlanDialogProp
     selectedInterests: [] as string[]
   });
   const { toast } = useToast();
+  const { startNavigation } = useNavigationState();
 
   useEffect(() => {
     if (open) {
@@ -153,10 +155,27 @@ export function QuickPlanDialog({ trigger, onRouteCreated }: QuickPlanDialogProp
 
       toast({
         title: 'Route Created! 🎉',
-        description: `Your ${routeName} route is ready for adventure.`,
+        description: `Your ${routeName} route is ready. Opening route planner...`,
       });
 
       onRouteCreated?.(route);
+
+      // Navigate to Route Planner with initial waypoints
+      const waypoints = [
+        {
+          name: formData.startLocation,
+          lat: '37.7749', // Default to San Francisco coords - will be geocoded in Route Planner
+          lng: '-122.4194',
+        },
+        {
+          name: formData.endLocation,
+          lat: '34.0522', // Default to LA coords - will be geocoded in Route Planner
+          lng: '-118.2437',
+        },
+      ];
+
+      startNavigation(routeName, waypoints);
+
       setOpen(false);
       setFormData({
         name: '',

@@ -1,0 +1,204 @@
+{
+  "common": {
+    "appName": "Planificador de Viajes",
+    "loading": "Cargando...",
+    "error": "Error",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "add": "Agregar",
+    "close": "Cerrar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "confirm": "Confirmar",
+    "search": "Buscar"
+  },
+  "navigation": {
+    "dashboard": "Panel",
+    "plan": "Planear",
+    "discover": "Descubrir",
+    "guide": "Guía IA",
+    "trips": "Mis Viajes",
+    "favorites": "Favoritos",
+    "profile": "Perfil",
+    "nearby": "Cerca",
+    "emergency": "Emergencia"
+  },
+  "dashboard": {
+    "title": "Panel",
+    "activeNavigation": "NAVEGACIÓN ACTIVA",
+    "complete": "Completo",
+    "resumeDrive": "Reanudar Viaje",
+    "viewMap": "Ver Mapa",
+    "whereToNext": "¿Hacia dónde ahora?",
+    "startNewAdventure": "Tu plan de viaje personalizado con IA te espera. Comienza una nueva aventura hoy.",
+    "planNewTrip": "Planear Nuevo Viaje",
+    "currentStatus": "Estado Actual",
+    "nextStop": "Próxima Parada",
+    "vehicleStatus": "Estado del Vehículo",
+    "driverHealth": "Condición del Conductor",
+    "nearbyPlaces": "Lugares Cercanos"
+  },
+  "routePlanner": {
+    "title": "Planificador de Rutas",
+    "myTrip": "Mi Viaje",
+    "departure": "SALIDA",
+    "stops": "Paradas",
+    "departing": "Partiendo",
+    "arrival": "Llegada",
+    "addStop": "AGREGAR PARADA",
+    "remove": "ELIMINAR",
+    "chargeTo": "Cargar hasta",
+    "lunchStop": "Parada para Almorzar",
+    "askCompanion": "Pregunta al Compañero de Viaje por sugerencias..."
+  },
+  "quickPlan": {
+    "title": "Planificador Rápido",
+    "description": "Crea una ruta personalizada con recomendaciones impulsadas por IA en segundos.",
+    "routeName": "Nombre de la Ruta (Opcional)",
+    "routeNamePlaceholder": "ej. Aventura en la Costa de California",
+    "startLocation": "Ubicación de Inicio",
+    "startPlaceholder": "ej. San Francisco, CA",
+    "endLocation": "Ubicación de Destino",
+    "endPlaceholder": "ej. Los Ángeles, CA",
+    "travelStyle": "Estilo de Viaje",
+    "vehicleType": "Tipo de Vehículo",
+    "interests": "¿Qué te interesa? (Selecciona todo lo que aplique)",
+    "createRoute": "Crear Ruta",
+    "creatingRoute": "Creando Ruta...",
+    "routeCreated": "¡Ruta Creada!",
+    "routeReady": "Tu ruta {{routeName}} está lista. Abriendo planificador de rutas..."
+  },
+  "trips": {
+    "title": "Mis Viajes",
+    "subtitle": "Administra tus aventuras en curso e historial de viajes.",
+    "active": "Activo",
+    "upcoming": "Próximos",
+    "history": "Historial",
+    "noActiveTrips": "No hay viajes activos",
+    "readyToHitTheRoad": "¿Listo para comenzar? ¡Inicia un nuevo viaje!",
+    "resumeNavigation": "Reanudar Navegación",
+    "viewItinerary": "Ver Itinerario",
+    "tripProgress": "Progreso del Viaje",
+    "days": "Días",
+    "miles": "millas",
+    "completed": "Completado"
+  },
+  "poi": {
+    "nearby": "Cerca",
+    "found": "encontrados",
+    "filterOptions": "Opciones de Filtro",
+    "refineResults": "Refina tus resultados de búsqueda",
+    "minimumRating": "Calificación Mínima",
+    "maxPrice": "Precio Máximo/Hora",
+    "clearFilters": "Limpiar Filtros",
+    "locationRequired": "Acceso a Ubicación Requerido",
+    "enableLocation": "Cómo habilitar la ubicación:",
+    "enableStep1": "Haz clic en el ícono de ubicación en la barra de direcciones de tu navegador",
+    "enableStep2": "Selecciona 'Permitir' o 'Permitir siempre'",
+    "enableStep3": "Actualiza la página",
+    "categories": {
+      "all": "Todos",
+      "restaurants": "Restaurantes",
+      "gas": "Gasolineras",
+      "parking": "Estacionamiento",
+      "attractions": "Atracciones",
+      "shopping": "Compras"
+    },
+    "save": "Guardar",
+    "saved": "Guardado",
+    "addToRoute": "Agregar a Ruta",
+    "directions": "Direcciones",
+    "amenities": "Amenidades",
+    "paymentMethods": "Métodos de Pago",
+    "availability": "Disponibilidad",
+    "maxStay": "Estancia Máxima",
+    "call": "Llamar",
+    "reserveParking": "Reservar Estacionamiento",
+    "bookingComingSoon": "¡Función de reserva próximamente! Reserva tu lugar con anticipación.",
+    "reserveNow": "Reservar Ahora (Próximamente)",
+    "makeReservation": "Hacer una Reservación",
+    "tableBooking": "¡Integración de reserva de mesa próximamente!",
+    "bookTable": "Reservar Mesa (Próximamente)"
+  },
+  "vehicle": {
+    "model": "Modelo",
+    "battery": "Batería",
+    "range": "Autonomía",
+    "viewChargingPlan": "VER PLAN DE CARGA"
+  },
+  "driver": {
+    "condition": "Condición",
+    "fresh": "Fresco",
+    "tired": "Cansado",
+    "recommendation": "RECOMENDACIÓN",
+    "goodToContinue": "Bien para continuar conduciendo.",
+    "considerRest": "Considera tomar un descanso pronto.",
+    "findFood": "Buscar Comida",
+    "restArea": "Área de Descanso"
+  },
+  "weather": {
+    "currentWeather": "Clima Actual",
+    "feelsLike": "Sensación térmica",
+    "humidity": "Humedad",
+    "wind": "Viento"
+  },
+  "emergency": {
+    "title": "Emergencia",
+    "callEmergency": "Llamar Servicios de Emergencia",
+    "roadside": "Asistencia en Carretera",
+    "nearestHospital": "Hospital Más Cercano"
+  },
+  "profile": {
+    "title": "Perfil",
+    "personalInfo": "Información Personal",
+    "preferences": "Preferencias",
+    "language": "Idioma",
+    "selectLanguage": "Selecciona tu idioma preferido",
+    "notifications": "Notificaciones",
+    "privacy": "Privacidad",
+    "logout": "Cerrar Sesión"
+  },
+  "units": {
+    "km": "km",
+    "mi": "mi",
+    "m": "m",
+    "ft": "ft",
+    "away": "de distancia",
+    "hour": "hora",
+    "hours": "horas",
+    "minute": "minuto",
+    "minutes": "minutos"
+  },
+  "travelStyles": {
+    "adventure": {
+      "name": "Aventura",
+      "description": "Actividades al aire libre, senderismo, camping"
+    },
+    "luxury": {
+      "name": "Lujo",
+      "description": "Alta cocina, hoteles premium, spas"
+    },
+    "family": {
+      "name": "Familia",
+      "description": "Actividades familiares, parques infantiles"
+    },
+    "budget": {
+      "name": "Presupuesto",
+      "description": "Opciones económicas, atracciones gratuitas"
+    },
+    "business": {
+      "name": "Negocios",
+      "description": "Viajes eficientes, paradas aptas para trabajo"
+    }
+  },
+  "interests": {
+    "restaurants": "Restaurantes",
+    "attractions": "Atracciones",
+    "gasStations": "Gasolineras",
+    "hotels": "Hoteles",
+    "parks": "Parques",
+    "shopping": "Compras"
+  }
+}

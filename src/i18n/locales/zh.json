@@ -1,0 +1,204 @@
+{
+  "common": {
+    "appName": "旅行规划师",
+    "loading": "加载中...",
+    "error": "错误",
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "edit": "编辑",
+    "add": "添加",
+    "close": "关闭",
+    "back": "返回",
+    "next": "下一步",
+    "confirm": "确认",
+    "search": "搜索"
+  },
+  "navigation": {
+    "dashboard": "仪表板",
+    "plan": "规划",
+    "discover": "发现",
+    "guide": "AI助手",
+    "trips": "我的行程",
+    "favorites": "收藏",
+    "profile": "个人资料",
+    "nearby": "附近",
+    "emergency": "紧急情况"
+  },
+  "dashboard": {
+    "title": "仪表板",
+    "activeNavigation": "导航进行中",
+    "complete": "完成",
+    "resumeDrive": "继续行程",
+    "viewMap": "查看地图",
+    "whereToNext": "下一站去哪里？",
+    "startNewAdventure": "您的AI定制旅行计划正在等待。今天就开始新的冒险吧。",
+    "planNewTrip": "规划新行程",
+    "currentStatus": "当前状态",
+    "nextStop": "下一站",
+    "vehicleStatus": "车辆状态",
+    "driverHealth": "驾驶员状态",
+    "nearbyPlaces": "附近地点"
+  },
+  "routePlanner": {
+    "title": "路线规划",
+    "myTrip": "我的旅程",
+    "departure": "出发",
+    "stops": "停靠站",
+    "departing": "出发中",
+    "arrival": "到达",
+    "addStop": "添加停靠站",
+    "remove": "移除",
+    "chargeTo": "充电至",
+    "lunchStop": "午餐休息",
+    "askCompanion": "向旅行伙伴询问建议..."
+  },
+  "quickPlan": {
+    "title": "快速规划",
+    "description": "几秒钟内通过AI推荐创建个性化路线。",
+    "routeName": "路线名称（可选）",
+    "routeNamePlaceholder": "例如：加州海岸探险",
+    "startLocation": "出发地",
+    "startPlaceholder": "例如：旧金山，加州",
+    "endLocation": "目的地",
+    "endPlaceholder": "例如：洛杉矶，加州",
+    "travelStyle": "旅行风格",
+    "vehicleType": "车辆类型",
+    "interests": "您感兴趣的是什么？（选择所有适用项）",
+    "createRoute": "创建路线",
+    "creatingRoute": "正在创建路线...",
+    "routeCreated": "路线已创建！",
+    "routeReady": "您的{{routeName}}路线已准备好。正在打开路线规划器..."
+  },
+  "trips": {
+    "title": "我的行程",
+    "subtitle": "管理您正在进行的冒险和旅行历史。",
+    "active": "进行中",
+    "upcoming": "即将开始",
+    "history": "历史记录",
+    "noActiveTrips": "没有进行中的行程",
+    "readyToHitTheRoad": "准备好上路了吗？开始新的旅程！",
+    "resumeNavigation": "继续导航",
+    "viewItinerary": "查看行程单",
+    "tripProgress": "行程进度",
+    "days": "天",
+    "miles": "英里",
+    "completed": "已完成"
+  },
+  "poi": {
+    "nearby": "附近",
+    "found": "找到",
+    "filterOptions": "筛选选项",
+    "refineResults": "优化搜索结果",
+    "minimumRating": "最低评分",
+    "maxPrice": "最高价格/小时",
+    "clearFilters": "清除筛选",
+    "locationRequired": "需要位置访问权限",
+    "enableLocation": "如何启用位置：",
+    "enableStep1": "点击浏览器地址栏中的位置图标",
+    "enableStep2": "选择'允许'或'始终允许'",
+    "enableStep3": "刷新页面",
+    "categories": {
+      "all": "全部",
+      "restaurants": "餐厅",
+      "gas": "加油站",
+      "parking": "停车场",
+      "attractions": "景点",
+      "shopping": "购物"
+    },
+    "save": "保存",
+    "saved": "已保存",
+    "addToRoute": "添加到路线",
+    "directions": "路线指引",
+    "amenities": "设施",
+    "paymentMethods": "支付方式",
+    "availability": "可用性",
+    "maxStay": "最长停留",
+    "call": "拨打",
+    "reserveParking": "预订停车位",
+    "bookingComingSoon": "预订功能即将推出！提前预订您的位置。",
+    "reserveNow": "立即预订（即将推出）",
+    "makeReservation": "进行预订",
+    "tableBooking": "餐桌预订集成即将推出！",
+    "bookTable": "预订餐桌（即将推出）"
+  },
+  "vehicle": {
+    "model": "型号",
+    "battery": "电池",
+    "range": "续航",
+    "viewChargingPlan": "查看充电计划"
+  },
+  "driver": {
+    "condition": "状况",
+    "fresh": "精神饱满",
+    "tired": "疲劳",
+    "recommendation": "建议",
+    "goodToContinue": "可以继续驾驶。",
+    "considerRest": "考虑尽快休息。",
+    "findFood": "寻找食物",
+    "restArea": "休息区"
+  },
+  "weather": {
+    "currentWeather": "当前天气",
+    "feelsLike": "体感温度",
+    "humidity": "湿度",
+    "wind": "风速"
+  },
+  "emergency": {
+    "title": "紧急情况",
+    "callEmergency": "拨打紧急服务",
+    "roadside": "道路救援",
+    "nearestHospital": "最近的医院"
+  },
+  "profile": {
+    "title": "个人资料",
+    "personalInfo": "个人信息",
+    "preferences": "偏好设置",
+    "language": "语言",
+    "selectLanguage": "选择您的首选语言",
+    "notifications": "通知",
+    "privacy": "隐私",
+    "logout": "登出"
+  },
+  "units": {
+    "km": "公里",
+    "mi": "英里",
+    "m": "米",
+    "ft": "英尺",
+    "away": "距离",
+    "hour": "小时",
+    "hours": "小时",
+    "minute": "分钟",
+    "minutes": "分钟"
+  },
+  "travelStyles": {
+    "adventure": {
+      "name": "冒险",
+      "description": "户外活动、徒步旅行、露营"
+    },
+    "luxury": {
+      "name": "奢华",
+      "description": "精致餐饮、高级酒店、水疗"
+    },
+    "family": {
+      "name": "家庭",
+      "description": "适合儿童的活动、游乐场"
+    },
+    "budget": {
+      "name": "经济",
+      "description": "经济实惠的选择、免费景点"
+    },
+    "business": {
+      "name": "商务",
+      "description": "高效旅行、适合工作的停靠站"
+    }
+  },
+  "interests": {
+    "restaurants": "餐厅",
+    "attractions": "景点",
+    "gasStations": "加油站",
+    "hotels": "酒店",
+    "parks": "公园",
+    "shopping": "购物"
+  }
+}

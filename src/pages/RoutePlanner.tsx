@@ -5,13 +5,17 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Plus, Save, ArrowLeft, MapPin, Zap, Sparkles, Bot, User, 
-  Send, Heart, Mountain, Utensils, Palette, Star, Ticket, 
+import {
+  Plus, Save, ArrowLeft, MapPin, Zap, Sparkles, Bot, User,
+  Send, Heart, Mountain, Utensils, Palette, Star, Ticket,
   Play, Pause, Map as MapIcon, X, Calendar
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { usePOIToRoute, useNavigationState } from '@/hooks';
+import { routeService, openRouteService } from '@/services';
+import { getUserMembership } from '@/lib/featureFlags';
+import type { MembershipTier } from '@/types';
 
 // --- REMOVED CONTEXT IMPORT FOR SAFE MODE ---
 // import { useTrip } from '@/context/TripContext';
@@ -84,7 +88,10 @@ const addMinutes = (timeStr: string, minutes: number) => {
 
 export function RoutePlanner() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
+  const { getPendingPOI } = usePOIToRoute();
+  const { getPendingNavigation, clearNavigation } = useNavigationState();
   
   // --- MOCK PROFILE (Safe Mode) ---
   const userProfile = {
@@ -115,6 +122,12 @@ export function RoutePlanner() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const requestRef = useRef<number>();
   const startTimeRef = useRef<number>();
+
+  // ORS Integration State
+  const [userTier, setUserTier] = useState<MembershipTier>('free');
+  const [isCalculatingRoute, setIsCalculatingRoute] = useState(false);
+  const [routeData, setRouteData] = useState<any>(null);
+  const [remainingQuota, setRemainingQuota] = useState(2000);
 
   const buddy = PERSONAS[activePersona] || PERSONAS['guide'];
 
@@ -155,6 +168,125 @@ export function RoutePlanner() {
   };
 
   // --- EFFECTS ---
+
+  // Load navigation data from QuickPlanDialog, My Trips, or Dashboard
+  useEffect(() => {
+    const navData = getPendingNavigation();
+
+    if (navData) {
+      console.log('[RoutePlanner] Loading navigation data:', navData);
+
+      // Handle "start" mode - new trip from QuickPlanDialog
+      if (navData.mode === 'start' && navData.waypoints) {
+        setTripName(navData.routeName || 'My Iconic Trip');
+
+        // Convert waypoints to route planner format
+        const formattedWaypoints = navData.waypoints.map((wp, index) => ({
+          id: index + 1,
+          name: wp.name,
+          lat: wp.lat,
+          lng: wp.lng,
+          time: index === 0 ? startTime : '00:00',
+          type: index === 0 ? 'start' : (index === navData.waypoints.length - 1 ? 'destination' : 'stop'),
+          notes: index === 0 ? 'Departing' : (index === navData.waypoints.length - 1 ? 'Arrival' : 'Stop'),
+          battery: index === 0 ? 100 : 50
+        }));
+
+        const recalculated = recalculateLogistics(formattedWaypoints, startTime);
+        setWaypoints(recalculated);
+
+        toast({
+          title: "Route Loaded",
+          description: `${navData.routeName} is ready to plan.`,
+        });
+
+        // Don't clear yet - keep for potential refresh
+      }
+
+      // Handle "resume" mode - existing trip from My Trips or Dashboard
+      if (navData.mode === 'resume' && navData.tripId) {
+        // Load trip data by ID from tripService
+        const loadTrip = async () => {
+          try {
+            const { tripService } = await import('@/services');
+            const trip = await tripService.getTripById(navData.tripId);
+
+            if (trip) {
+              setTripName(trip.name || 'Pacific Coast Highway');
+
+              // Convert checkPoints to waypoints format
+              const waypointsFromTrip = trip.checkPoints.map((checkpoint, index) => ({
+                id: index + 1,
+                name: checkpoint.location,
+                lat: index === 0 ? trip.startLocation.lat.toString() : '0',
+                lng: index === 0 ? trip.startLocation.lng.toString() : '0',
+                time: new Date(checkpoint.timestamp).toLocaleTimeString('en-US', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  hour12: false
+                }),
+                type: index === 0 ? 'start' : (index === trip.checkPoints.length - 1 ? 'destination' : 'stop'),
+                notes: checkpoint.notes || 'Stop',
+                battery: index === 0 ? 100 : 50
+              }));
+
+              setWaypoints(waypointsFromTrip);
+
+              toast({
+                title: "Trip Loaded",
+                description: `${trip.name} is ready to navigate.`,
+              });
+            }
+          } catch (error) {
+            console.error('[RoutePlanner] Failed to load trip:', error);
+            toast({
+              title: "Error",
+              description: "Failed to load trip data.",
+              variant: "destructive",
+            });
+          }
+        };
+
+        loadTrip();
+      }
+    }
+  }, [getPendingNavigation, startTime, toast]);
+
+  // Check for pending POI to add to route
+  useEffect(() => {
+    const pendingPOI = getPendingPOI();
+    if (pendingPOI) {
+      // Add POI as a new waypoint
+      const newWaypoint = {
+        id: waypoints.length + 1,
+        name: pendingPOI.name,
+        lat: pendingPOI.lat,
+        lng: pendingPOI.lng,
+        time: '00:00',
+        type: pendingPOI.type === 'parking' ? 'stop' : 'stop',
+        notes: 'Added from POI',
+        battery: 50
+      };
+
+      // Insert before the last waypoint (destination)
+      const updatedWaypoints = [
+        ...waypoints.slice(0, -1),
+        newWaypoint,
+        waypoints[waypoints.length - 1]
+      ];
+
+      // Recalculate logistics
+      const recalculated = recalculateLogistics(updatedWaypoints, startTime);
+      setWaypoints(recalculated);
+
+      // Show confirmation toast
+      toast({
+        title: "POI Added to Route",
+        description: `${pendingPOI.name} has been added to your route.`,
+      });
+    }
+  }, []); // Run once on mount
+
   useEffect(() => {
     // Local fallback instead of context
     if (userProfile?.preferences.avatarStyle && PERSONAS[userProfile.preferences.avatarStyle]) {
@@ -165,6 +297,44 @@ export function RoutePlanner() {
   useEffect(() => {
     setMessages([{ id: 'init', role: 'ai', text: buddy.greeting }]);
   }, [activePersona]);
+
+  // Initialize user tier and quota
+  useEffect(() => {
+    // In production, get from auth context
+    const userId = 'test@example.com'; // Replace with actual authenticated user
+    const tier = getUserMembership(userId);
+    setUserTier(tier);
+    setRemainingQuota(openRouteService.getRemainingQuota());
+  }, []);
+
+  // Calculate route when waypoints change (debounced)
+  useEffect(() => {
+    if (waypoints.length < 2) return;
+
+    const timer = setTimeout(async () => {
+      setIsCalculatingRoute(true);
+
+      try {
+        // Extract coordinates from waypoints (simplified - uses mock coords for now)
+        const coords = waypoints.map(() => ({
+          lat: 37.7749 + Math.random() * 2,
+          lng: -122.4194 + Math.random() * 2,
+        }));
+
+        const result = await routeService.calculateRoute(coords, 'test@example.com');
+        setRouteData(result);
+
+        // Update remaining quota
+        setRemainingQuota(openRouteService.getRemainingQuota());
+      } catch (error) {
+        console.error('Route calculation error:', error);
+      } finally {
+        setIsCalculatingRoute(false);
+      }
+    }, 500); // Debounce 500ms
+
+    return () => clearTimeout(timer);
+  }, [waypoints]);
 
   // --- STEP 3: CONNECT START TIME ---
   const handleStartTimeChange = (newTime: string) => {
@@ -332,9 +502,59 @@ export function RoutePlanner() {
            </Button>
         </div>
 
+        {/* API Status Badge */}
+        {userTier === 'test' || userTier === 'basic' || userTier === 'advanced' || userTier === 'expert' ? (
+          <Card className="mx-4 mt-3 bg-blue-50 border-blue-200">
+            <CardContent className="p-3">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-medium text-blue-900 flex items-center gap-1">
+                  <MapIcon className="w-3 h-3" />
+                  Real Routing Active
+                </span>
+                <Badge variant="outline" className="bg-white text-blue-700 text-[10px] px-2 py-0.5">
+                  {remainingQuota}/2000 today
+                </Badge>
+              </div>
+              {isCalculatingRoute && (
+                <div className="mt-2 text-xs text-blue-600 flex items-center gap-2">
+                  <div className="w-3 h-3 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                  Calculating optimal route...
+                </div>
+              )}
+              {routeData && !isCalculatingRoute && (
+                <div className="mt-2 text-[10px] text-blue-700">
+                  Route: {routeData.distance.toFixed(1)} km • {routeData.duration.toFixed(1)}h
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className="mx-4 mt-3 bg-gray-50 border-gray-200">
+            <CardContent className="p-3">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-medium text-gray-700 flex items-center gap-1">
+                  <MapPin className="w-3 h-3" />
+                  Free Explorer
+                </span>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-6 text-[10px] px-2"
+                  onClick={() => navigate('/pricing')}
+                >
+                  Upgrade ✨
+                </Button>
+              </div>
+              <p className="text-[10px] text-gray-500 mt-1">
+                Using estimated routes. Upgrade for real-time navigation.
+              </p>
+            </CardContent>
+          </Card>
+        )}
+
         <ScrollArea className="flex-1" ref={scrollRef}>
            <div className="p-5 space-y-6">
-              
+
               {/* 2. Hidden Gem Alert */}
               <Card className={`border-l-4 shadow-sm animate-in slide-in-from-top-4 transition-all duration-300 ${buddy.borderColor} bg-white`}>
                  <CardContent className="p-4">
